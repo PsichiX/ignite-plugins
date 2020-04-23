@@ -1,0 +1,14 @@
+{
+  "name": "Ignite Code Plugin",
+  "description": "Plugin template for Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "privileges": {},
+  "templates": {},
+  "queries": [],
+  "windows": [
+    "Code"
+  ],
+  "widgets": [],
+  "dependencies": []
+}

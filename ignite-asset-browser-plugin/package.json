@@ -1,0 +1,19 @@
+{
+  "name": "ignite-asset-browser-plugin",
+  "version": "0.1.0",
+  "description": "Ignite Asset Browser Plugin",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-react": "^7.8.3",
+    "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.1.1",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-shell-plugin-next": "^1.1.5"
+  }
+}

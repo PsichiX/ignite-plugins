@@ -1,0 +1,11 @@
+{
+  "name": "Ignite Asset Browser Plugin",
+  "description": "Asset browser plugin for Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "queries": [],
+  "windows": [
+    "Asset Browser"
+  ],
+  "widgets": []
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Ignite Play Mode Plugin",
+  "description": "Play mode plugin for Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "queries": [],
+  "windows": [
+    "Play Mode"
+  ],
+  "widgets": []
+}

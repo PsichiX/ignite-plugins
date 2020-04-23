@@ -1,0 +1,31 @@
+{
+  "name": "Ignite Oxygengine Plugin",
+  "description": "Plugin that brings support for Oxygengine Game Engine into Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "privileges": {},
+  "templates": {
+    "Web Composite Game": {
+      "description": "Ideal for the minimal web composite game setup.",
+      "root": "templates/web-composite-game",
+      "image": "templates/web-composite-game.png",
+      "npm": true
+    },
+    "Hybrid Script Game": {
+      "description": "Mix of web composite game with JavaScript scripting backend.",
+      "root": "templates/hybrid-script-game",
+      "image": "templates/hybrid-script-game.png",
+      "npm": true
+    },
+    "Desktop Headless Game": {
+      "description": "Typical minimal setup for game server without media overhead.",
+      "root": "templates/desktop-headless-game",
+      "image": "templates/desktop-headless-game.png",
+      "npm": true
+    }
+  },
+  "queries": [],
+  "windows": [],
+  "widgets": [],
+  "dependencies": []
+}

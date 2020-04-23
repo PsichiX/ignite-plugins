@@ -1,0 +1,142 @@
+#[macro_use]
+extern crate lazy_static;
+
+use ignite_plugin_utils::global::{
+    emit, get_plugin_meta, ignite, run_node, run_server, terminate_server,
+};
+use serde::{Deserialize, Serialize};
+use std::sync::RwLock;
+use wasm_bindgen::prelude::*;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct State {
+    #[serde(rename(serialize = "isRunning", deserialize = "isRunning"))]
+    pub is_running: bool,
+    #[serde(rename(serialize = "isBuilding", deserialize = "isBuilding"))]
+    pub is_building: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Meta {
+    pub dist: Option<String>,
+}
+
+lazy_static! {
+    static ref PLAY_TOKEN: RwLock<Option<String>> = RwLock::new(None);
+    static ref BUILD_TOKEN: RwLock<Option<String>> = RwLock::new(None);
+}
+
+#[wasm_bindgen]
+pub fn query(query: &str, data: JsValue) -> Result<(), JsValue> {
+    match query {
+        "start" => {
+            if let (Ok(mut play), Ok(build)) = (PLAY_TOKEN.write(), BUILD_TOKEN.read()) {
+                if play.is_some() {
+                    return Ok(());
+                }
+                let meta = get_plugin_meta()?;
+                if let Ok(meta) = meta.into_serde::<Meta>() {
+                    if let Some(directory) = meta.dist {
+                        let token = run_server(&directory, 19100, "Play Mode")?;
+                        *play = Some(token);
+                        let state = State {
+                            is_running: true,
+                            is_building: build.is_some(),
+                        };
+                        if let Ok(state) = JsValue::from_serde(&state) {
+                            emit("change", state)?;
+                        }
+                        drop(ignite("?", "play-mode-start", JsValue::UNDEFINED));
+                    }
+                }
+            }
+        }
+        "stop" => {
+            if let (Ok(mut play), Ok(build)) = (PLAY_TOKEN.write(), BUILD_TOKEN.read()) {
+                if play.is_none() {
+                    return Ok(());
+                }
+                terminate_server(play.as_ref().unwrap().as_str())?;
+                *play = None;
+                let state = State {
+                    is_running: false,
+                    is_building: build.is_some(),
+                };
+                if let Ok(state) = JsValue::from_serde(&state) {
+                    emit("change", state)?;
+                }
+            }
+        }
+        // "launch" => {
+        //     if let (Ok(play), Ok(build)) = (PLAY_TOKEN.write(), BUILD_TOKEN.write()) {
+        //         if play.is_some() || build.is_some() {
+        //             return Ok(());
+        //         }
+        //     }
+        // }
+        "build" => {
+            if let (Ok(play), Ok(mut build)) = (PLAY_TOKEN.read(), BUILD_TOKEN.write()) {
+                if build.is_some() {
+                    return Ok(());
+                }
+                let token = run_node("@build", vec![], true, false)?;
+                *build = Some(token);
+                let state = State {
+                    is_running: play.is_some(),
+                    is_building: true,
+                };
+                if let Ok(state) = JsValue::from_serde(&state) {
+                    emit("change", state)?;
+                }
+                drop(ignite("?", "play-mode-build-start", JsValue::UNDEFINED));
+            }
+        }
+        "build-release" => {
+            if let (Ok(play), Ok(mut build)) = (PLAY_TOKEN.read(), BUILD_TOKEN.write()) {
+                if build.is_some() {
+                    return Ok(());
+                }
+                let token = run_node("@build-release", vec![], true, false)?;
+                *build = Some(token);
+                let state = State {
+                    is_running: play.is_some(),
+                    is_building: true,
+                };
+                if let Ok(state) = JsValue::from_serde(&state) {
+                    emit("change", state)?;
+                }
+                drop(ignite("?", "play-mode-build-start", JsValue::UNDEFINED));
+            }
+        }
+        "node-terminated" => {
+            if let (Ok(mut play), Ok(mut build)) = (PLAY_TOKEN.write(), BUILD_TOKEN.write()) {
+                if play.is_none() && build.is_none() {
+                    return Ok(());
+                }
+                if let Some(token) = data.as_string() {
+                    if let Some(value) = play.clone() {
+                        if value == token {
+                            *play = None;
+                            drop(ignite("?", "play-mode-stop", JsValue::UNDEFINED));
+                        }
+                    }
+                    if let Some(value) = build.clone() {
+                        if value == token {
+                            *build = None;
+                            drop(ignite("?", "play-mode-build-stop", JsValue::UNDEFINED));
+                        }
+                    }
+                    let state = State {
+                        is_running: play.is_some(),
+                        is_building: build.is_some(),
+                    };
+                    if let Ok(state) = JsValue::from_serde(&state) {
+                        emit("change", state)?;
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
+    Ok(())
+}

@@ -1,0 +1,16 @@
+[package]
+name = "ignite-plugin-utils"
+version = "0.1.0"
+authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
+edition = "2018"
+description = "Set of utilities for Rust side Ignite Editor plugins"
+license-file = "../LICENSE"
+homepage = "https://github.com/PsichiX/ignite-plugins"
+repository = "https://github.com/PsichiX/ignite-plugins"
+documentation = "https://docs.rs/ignite-plugin-utils"
+readme = "../README.md"
+maintenance = { status = "actively-developed" }
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }

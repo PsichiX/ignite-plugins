@@ -1,0 +1,11 @@
+{
+  "name": "Ignite Screenshots Plugin",
+  "description": "Screenshots plugin for Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "queries": [
+    "screenshot"
+  ],
+  "windows": [],
+  "widgets": []
+}
