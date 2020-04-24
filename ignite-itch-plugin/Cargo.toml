@@ -1,5 +1,5 @@
 [package]
-name = "ignite-play-mode-plugin"
+name = "ignite-itch-plugin"
 version = "0.1.0"
 authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
 edition = "2018"

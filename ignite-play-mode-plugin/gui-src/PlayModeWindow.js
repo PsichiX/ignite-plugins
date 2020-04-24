@@ -12,6 +12,7 @@ import {
   Airplay as ResumeIcon,
   PhotoCamera as ScreenshotIcon,
   Fullscreen as FullscreenIcon,
+  BugReport as DebugIcon,
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
 import { ignite, on, off } from 'ignite-editor';
@@ -61,6 +62,7 @@ class PlayModeWindow extends React.Component {
     this._onStop = this.onStop.bind(this);
     this._onReload = this.onReload.bind(this);
     this._onPlayExternal = this.onPlayExternal.bind(this);
+    this._onDebug = this.onDebug.bind(this);
     this._onBuild = this.onBuild.bind(this);
     this._onBuildRelease = this.onBuildRelease.bind(this);
     this._onTakeScreenshot = this.onTakeScreenshot.bind(this);
@@ -101,6 +103,13 @@ class PlayModeWindow extends React.Component {
 
   onPlayExternal() {
     ignite('ignite-play-mode-plugin', 'launch');
+  }
+
+  onDebug() {
+    const { current } = this._viewRef;
+    if (!!current) {
+      current.openDevTools();
+    }
   }
 
   onBuild() {
@@ -233,6 +242,17 @@ class PlayModeWindow extends React.Component {
               </IconButton>
             </span>
           </Tooltip>
+          <Tooltip title="Open debugger window">
+            <span>
+              <IconButton
+                color="primary"
+                disabled={!isRunning || isPaused || isReloading}
+                onClick={this._onDebug}
+              >
+                <DebugIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
           <Tooltip title="Build game">
             <span>
               <IconButton
@@ -279,7 +299,7 @@ class PlayModeWindow extends React.Component {
           </Tooltip>
         </div>
         {isRunning && !isReloading && !isPaused ? (
-          <iframe
+          <webview
             style={style.view}
             src="http://localhost:19100"
             ref={this._viewRef}

@@ -1,13 +1,13 @@
 {
-  "name": "Ignite Code Plugin",
-  "description": "Code editing plugin for Ignite Editor",
+  "name": "Ignite Itch.io Plugin",
+  "description": "Itch.io plugin for Ignite Editor",
   "plugin": "index.js",
   "gui": "gui",
   "privileges": {},
   "templates": {},
   "queries": [],
   "windows": [
-    "Code"
+    "ItchWindow"
   ],
   "widgets": [],
   "dependencies": []

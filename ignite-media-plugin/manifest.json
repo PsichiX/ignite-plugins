@@ -1,6 +1,6 @@
 {
-  "name": "Ignite Plugin Template",
-  "description": "Plugin template for Ignite Editor",
+  "name": "Ignite Media Plugin",
+  "description": "Media viewer plugin for Ignite Editor",
   "plugin": "index.js",
   "gui": "gui",
   "privileges": {},

@@ -3,6 +3,7 @@ name = "~%IGNITE_ID%~"
 version = "0.1.0"
 authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
 edition = "2018"
+publish = false
 
 [lib]
 crate-type = ["cdylib"]

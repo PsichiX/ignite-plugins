@@ -8,6 +8,9 @@ pub mod global {
         #[wasm_bindgen(js_namespace = global, catch)]
         pub fn ignite(plugin: &str, query: &str, data: JsValue) -> Result<(), JsValue>;
 
+        #[wasm_bindgen(js_namespace = global)]
+        pub fn ignite_delayed(plugin: &str, query: &str, data: JsValue);
+
         #[wasm_bindgen(js_namespace = global, js_name = run_node, catch)]
         fn run_node_inner(
             name: &str,
@@ -24,6 +27,14 @@ pub mod global {
 
         #[wasm_bindgen(js_namespace = global, catch)]
         pub fn run_server(directory: &str, port: usize, name: &str) -> Result<String, JsValue>;
+
+        #[wasm_bindgen(js_namespace = global, catch)]
+        pub fn run_proxy_server(
+            address: &str,
+            port: usize,
+            name: &str,
+            opts: JsValue,
+        ) -> Result<String, JsValue>;
 
         #[wasm_bindgen(js_namespace = global, catch)]
         pub fn terminate_server(token: &str) -> Result<(), JsValue>;

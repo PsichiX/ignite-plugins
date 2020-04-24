@@ -108,9 +108,9 @@ pub fn query(query: &str, data: JsValue) -> Result<(), JsValue> {
                 drop(ignite("?", "play-mode-build-start", JsValue::UNDEFINED));
             }
         }
-        "node-terminated" => {
-            if let (Ok(mut play), Ok(mut build)) = (PLAY_TOKEN.write(), BUILD_TOKEN.write()) {
-                if play.is_none() && build.is_none() {
+        "server-terminated" => {
+            if let (Ok(mut play), Ok(build)) = (PLAY_TOKEN.write(), BUILD_TOKEN.read()) {
+                if play.is_none() {
                     return Ok(());
                 }
                 if let Some(token) = data.as_string() {
@@ -120,6 +120,22 @@ pub fn query(query: &str, data: JsValue) -> Result<(), JsValue> {
                             drop(ignite("?", "play-mode-stop", JsValue::UNDEFINED));
                         }
                     }
+                    let state = State {
+                        is_running: play.is_some(),
+                        is_building: build.is_some(),
+                    };
+                    if let Ok(state) = JsValue::from_serde(&state) {
+                        emit("change", state)?;
+                    }
+                }
+            }
+        }
+        "node-terminated" => {
+            if let (Ok(play), Ok(mut build)) = (PLAY_TOKEN.read(), BUILD_TOKEN.write()) {
+                if build.is_none() {
+                    return Ok(());
+                }
+                if let Some(token) = data.as_string() {
                     if let Some(value) = build.clone() {
                         if value == token {
                             *build = None;
