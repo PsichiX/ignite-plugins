@@ -3,6 +3,7 @@
 ## Plugins list:
 - `ignite-asset-browser-plugin` - Asset browser that show project file structure.
 - `ignite-code-plugin` - Allows to open text files in code editor.
+- `ignite-itch-plugin` - Itch.io integration for downloading/buying Ignite plugins.
 - `ignite-media-plugin` - Allows to open media files (images, audio and video)
   in preview editor.
 - `ignite-oxygengine-plugin` - Gives support for the Oxygengine game engine
