@@ -1,7 +1,7 @@
 {
-  "name": "Ignite Plugin Template",
-  "description": "Plugin template for Ignite Editor",
-  "plugin": "index.js",
+  "name": "~%IGNITE_ID%~",
+  "description": "Plugin created to bring new feature to the Ignite Editor",
+  "plugin": "logic/index.js",
   "gui": "gui",
   "privileges": {},
   "templates": {},

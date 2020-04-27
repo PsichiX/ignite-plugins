@@ -1,0 +1,25 @@
+{
+  "name": "Ignite Addons Development Template",
+  "description": "Brings complete environment for Ignite Editor plugin development",
+  "plugin": "index.js",
+  "gui": "gui",
+  "privileges": {},
+  "templates": {
+    "Ignite Editor plugin using Rust": {
+      "description": "Ignite Editor plugin development using Rust for the logic.",
+      "root": "templates/ignite-plugin-template-rust",
+      "image": "templates/ignite-plugin-template-rust.png",
+      "npm": true
+    },
+    "Ignite Editor plugin using JavaScript": {
+      "description": "Ignite Editor plugin development using JavaScript for the logic.",
+      "root": "templates/ignite-plugin-template-js",
+      "image": "templates/ignite-plugin-template-js.png",
+      "npm": true
+    }
+  },
+  "queries": [],
+  "windows": [],
+  "widgets": [],
+  "dependencies": []
+}

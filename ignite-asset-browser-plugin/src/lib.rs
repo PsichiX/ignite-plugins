@@ -1,5 +1,5 @@
 use glob::Pattern;
-use ignite_plugin_utils::{file_system::scan_dir, global::emit, paths::project_path};
+use ignite_plugin_utils::{editor::emit, file_system::scan_dir, paths::project_path};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 

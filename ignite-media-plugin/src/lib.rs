@@ -1,5 +1,5 @@
 use ignite_plugin_utils::{
-    global::{emit, ensure_window_focused},
+    editor::{emit, ensure_window_focused},
     paths::basename,
 };
 use serde::{Deserialize, Serialize};

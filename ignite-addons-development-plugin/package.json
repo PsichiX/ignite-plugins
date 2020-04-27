@@ -1,5 +1,5 @@
 {
-  "name": "~%IGNITE_ID%~",
+  "name": "ignite-addons-development-plugin",
   "version": "0.1.0",
   "description": "Ignite Plugin Template",
   "main": "index.js",

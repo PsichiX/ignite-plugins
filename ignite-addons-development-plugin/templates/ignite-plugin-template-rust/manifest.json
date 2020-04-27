@@ -1,0 +1,17 @@
+{
+  "name": "~%IGNITE_ID%~",
+  "description": "Plugin created to bring new feature to the Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "privileges": {},
+  "templates": {},
+  "queries": [
+    "alert",
+    "ping"
+  ],
+  "windows": [],
+  "widgets": [
+    "HelloWorld"
+  ],
+  "dependencies": []
+}

@@ -1,6 +1,6 @@
 use ignite_plugin_utils::{
+    editor::{emit, ensure_window_focused},
     file_system::{read_string, write_string},
-    global::{emit, ensure_window_focused},
     paths::{basename, relative_to_project},
 };
 use serde::{Deserialize, Serialize};

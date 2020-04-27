@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
 
-use ignite_plugin_utils::global::{
+use ignite_plugin_utils::editor::{
     emit, get_plugin_meta, ignite, run_node, run_server, terminate_server,
 };
 use serde::{Deserialize, Serialize};

@@ -1,17 +1,17 @@
 use wasm_bindgen::prelude::*;
 
-pub mod global {
+pub mod editor {
     use super::*;
 
     #[wasm_bindgen]
     extern "C" {
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn ignite(plugin: &str, query: &str, data: JsValue) -> Result<(), JsValue>;
 
-        #[wasm_bindgen(js_namespace = global)]
+        #[wasm_bindgen(js_namespace = editor)]
         pub fn ignite_delayed(plugin: &str, query: &str, data: JsValue);
 
-        #[wasm_bindgen(js_namespace = global, js_name = run_node, catch)]
+        #[wasm_bindgen(js_namespace = editor, js_name = run_node, catch)]
         fn run_node_inner(
             name: &str,
             args: Box<[JsValue]>,
@@ -19,16 +19,16 @@ pub mod global {
             quiet: bool,
         ) -> Result<String, JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn terminate_node(token: &str) -> Result<(), JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn is_node_running(token: &str) -> Result<bool, JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn run_server(directory: &str, port: usize, name: &str) -> Result<String, JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn run_proxy_server(
             address: &str,
             port: usize,
@@ -36,22 +36,22 @@ pub mod global {
             opts: JsValue,
         ) -> Result<String, JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn terminate_server(token: &str) -> Result<(), JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn is_server_running(token: &str) -> Result<bool, JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn emit(id: &str, data: JsValue) -> Result<(), JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn ensure_window_focused(name: &str) -> Result<(), JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn get_plugin_meta() -> Result<JsValue, JsValue>;
 
-        #[wasm_bindgen(js_namespace = global, catch)]
+        #[wasm_bindgen(js_namespace = editor, catch)]
         pub fn set_plugin_meta(data: JsValue) -> Result<(), JsValue>;
     }
 

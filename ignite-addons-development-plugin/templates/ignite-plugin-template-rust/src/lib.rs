@@ -1,4 +1,4 @@
-use ignite_plugin_utils::{console::log, global::ignite};
+use ignite_plugin_utils::{console::log, editor::ignite};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -16,7 +16,7 @@ pub fn query(query: &str, data: JsValue) -> Result<(), JsValue> {
                 message: "WEWOWEWOWEWO!!!".to_owned(),
             };
             if let Ok(payload) = JsValue::from_serde(&payload) {
-                ignite("ignite-plugin-template", "alert", payload)?;
+                ignite("~%IGNITE_ID%~", "alert", payload)?;
             }
         }
         "alert" => {

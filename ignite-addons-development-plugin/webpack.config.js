@@ -40,6 +40,7 @@ module.exports = {
     }),
     new CopyPlugin([
       'manifest.json',
+      { from: 'templates', to: 'templates' },
       'pkg/index.js',
       'pkg/index_bg.wasm',
     ]),
