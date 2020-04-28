@@ -3,6 +3,7 @@ import {
   Paper,
   Button,
   IconButton,
+  Dialog,
   DialogTitle,
   DialogContent,
   Typography,
@@ -196,6 +197,46 @@ on('gui/register-file-opener', (extension, pluginName) => {
   }
 });
 
+const FileActionDialog = props => {
+  const { filePath, onClose } = props;
+  const items = !!filePath
+    ? Array.from(openers.entries())
+      .filter(([key]) => key === '?' || filePath.endsWith(key))
+      .filter(([key], _, arr) => key === '?' ? arr.length === 1 : true)
+      .map(([_, value]) => {
+        const pluginName = value[value.length - 1];
+        return (
+          <Button
+            key={`open-with-${pluginName}`}
+            color="primary"
+            fullWidth={true}
+            onClick={() => {
+              ignite(pluginName, 'open-file', filePath);
+              !!onClose && onClose();
+            }}
+          >
+            {pluginName}
+          </Button>
+        );
+      })
+    : null
+  return (
+    <Dialog scroll="paper" open={!!filePath} onClose={onClose}>
+      <DialogTitle>{filePath}</DialogTitle>
+      <DialogContent>
+        <Typography variant="button" color="secondary">Open with</Typography>
+        {items}
+        <Typography variant="button" color="secondary">Edit</Typography>
+        <Button color="primary" fullWidth={true}>Rename</Button>
+        <Button color="primary" fullWidth={true}>Copy</Button>
+        <Button color="primary" fullWidth={true}>Paste</Button>
+        <Button color="primary" fullWidth={true}>Duplicate</Button>
+        <Button color="primary" fullWidth={true}>Delete</Button>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 const EntryItem = props => {
   const { fileName, filePath, isDirectory, onOpen } = props;
   const icon = isDirectory ? FolderIcon : getIcon(fileName);
@@ -228,6 +269,7 @@ class AssetBrowserWindow extends React.Component {
       searchLocal: false,
       excludeTypes: [],
       excludeFolders: false,
+      openMenu: null,
     };
     this._onEntries = this.onEntries.bind(this);
     this._onTuneToggle = this.onTuneToggle.bind(this);
@@ -301,20 +343,8 @@ class AssetBrowserWindow extends React.Component {
     this.updateContent(currentPath, searchValue, searchLocal, excludeTypes, excludeFolders);
   }
 
-  openFile(filePath) {
-    for (const [key, value] of openers.entries()) {
-      if (filePath.endsWith(key)) {
-        // TODO: change to display dialog if more than one.
-        const pluginName = value[value.length - 1];
-        ignite(pluginName, 'open-file', filePath);
-        return;
-      }
-    }
-    const handlers = openers.get('?');
-    if (!!handlers) {
-      const pluginName = handlers[handlers.length - 1];
-      ignite(pluginName, 'open-file', filePath);
-    }
+  openFileMenu(filePath) {
+    this.setState({ openMenu: filePath });
   }
 
   updateContent(currentPath, searchValue, searchLocal, excludeTypes, excludeFolders) {
@@ -349,6 +379,7 @@ class AssetBrowserWindow extends React.Component {
       searchLocal,
       excludeTypes,
       excludeFolders,
+      openMenu,
     } = this.state;
     const parts = currentPath.split(/[\\/]/g).slice(1);
     const paths = parts.map((_part, i) => '/' + parts.slice(0, i + 1).join('/'));
@@ -361,7 +392,7 @@ class AssetBrowserWindow extends React.Component {
         onOpen={
           is_directory
             ? () => this.goto(`${currentPath}/${file_name}`)
-            : () => this.openFile(`${currentPath}/${file_name}`)
+            : () => this.openFileMenu(`${currentPath}/${file_name}`)
         }
       />
     )) : null;
@@ -462,6 +493,10 @@ class AssetBrowserWindow extends React.Component {
             </div>
           </Paper>
         </Fade>
+        <FileActionDialog
+          filePath={openMenu}
+          onClose={() => this.openFileMenu(null)}
+        />
       </div >
     );
   }

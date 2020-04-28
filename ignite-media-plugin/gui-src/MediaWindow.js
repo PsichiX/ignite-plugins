@@ -165,7 +165,7 @@ class MediaWindow extends React.Component {
     const { active, openFiles, isReloading, fillView } = this.props.storage();
     if (!!isReloading) {
       setTimeout(() => {
-        this.props.storage().isReloading = true;
+        this.props.storage().isReloading = false;
         this.setState({});
       }, 1);
     }
