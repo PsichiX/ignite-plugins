@@ -169,6 +169,20 @@ pub fn renderer_refresh(id: &str, forced: bool) -> Result<(), JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn renderer_view_size(renderer: &str) -> Result<Box<[f32]>, JsValue> {
+    if let Ok(renderers) = RENDERERS.read() {
+        if let Some(renderer) = renderers.get(renderer) {
+            let v = renderer.renderer.view_size();
+            Ok(Box::new([v.x, v.y]))
+        } else {
+            Err(format!("Renderer does not exists: {}", renderer).into())
+        }
+    } else {
+        Err("Could not acquire a write access to renderers".into())
+    }
+}
+
+#[wasm_bindgen]
 pub fn camera_create(renderer: &str, camera: JsValue) -> Result<String, JsValue> {
     let camera = if camera.is_null() || camera.is_undefined() {
         Default::default()
