@@ -1,0 +1,14 @@
+{
+  "name": "Ignite Composite Renderer Plugin",
+  "description": "Composite rendering plugin for Ignite Editor",
+  "plugin": "index.js",
+  "gui": "gui",
+  "privileges": {},
+  "templates": {},
+  "queries": [],
+  "windows": [],
+  "widgets": [
+    "CompositeRenderer"
+  ],
+  "dependencies": []
+}

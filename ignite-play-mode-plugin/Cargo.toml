@@ -8,6 +8,9 @@ publish = false
 [lib]
 crate-type = ["cdylib"]
 
+[profile.release]
+opt-level = "s"
+
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }

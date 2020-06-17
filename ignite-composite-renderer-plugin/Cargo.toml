@@ -1,7 +1,6 @@
 [package]
-name = "ignite-addons-development-plugin"
+name = "ignite-composite-renderer-plugin"
 version = "0.1.0"
-authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
 edition = "2018"
 publish = false
 

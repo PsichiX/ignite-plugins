@@ -9,7 +9,6 @@ homepage = "https://github.com/PsichiX/ignite-plugins"
 repository = "https://github.com/PsichiX/ignite-plugins"
 documentation = "https://docs.rs/ignite-plugin-utils"
 readme = "../README.md"
-maintenance = { status = "actively-developed" }
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
