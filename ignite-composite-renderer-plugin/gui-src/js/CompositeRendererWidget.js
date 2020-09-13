@@ -181,7 +181,7 @@ class CompositeRendererWidget extends React.Component {
   }
 }
 
-registerWidget('CompositeRenderer', CompositeRendererWidget);
+registerWidget('Composite Renderer', CompositeRendererWidget);
 
 // import { registerWindow } from 'ignite-gui';
 //

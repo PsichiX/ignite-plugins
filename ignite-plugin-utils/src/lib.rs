@@ -119,6 +119,13 @@ pub mod file_system {
 
         #[wasm_bindgen(js_namespace = file_system, catch)]
         pub fn request_save(buffer: &[u8], title: &str, extension: &str) -> Result<(), JsValue>;
+
+        #[wasm_bindgen(js_namespace = file_system, catch)]
+        pub fn request_import(
+            title: &str,
+            extension: &str,
+            destinationDir: &str,
+        ) -> Result<(), JsValue>;
     }
 
     /// (path, name, is directory)
