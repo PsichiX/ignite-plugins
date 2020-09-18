@@ -13,6 +13,7 @@ import {
   PhotoCamera as ScreenshotIcon,
   Fullscreen as FullscreenIcon,
   BugReport as DebugIcon,
+  Cancel as CancelIcon,
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
 import { ignite, on, off } from 'ignite-editor';
@@ -65,9 +66,9 @@ class PlayModeWindow extends React.Component {
     this._onDebug = this.onDebug.bind(this);
     this._onBuild = this.onBuild.bind(this);
     this._onBuildRelease = this.onBuildRelease.bind(this);
+    this._onBuildCancel = this.onBuildCancel.bind(this);
     this._onTakeScreenshot = this.onTakeScreenshot.bind(this);
     this._onGoFullscreen = this.onGoFullscreen.bind(this);
-    this._onGotMessage = this.onGotMessage.bind(this);
     this._onChange = this.onChange.bind(this);
     this._viewRef = React.createRef();
     this._periodicPreview = null;
@@ -122,6 +123,11 @@ class PlayModeWindow extends React.Component {
     ignite('ignite-play-mode-plugin', 'build-release');
   }
 
+  onBuildCancel() {
+    this.onStop();
+    ignite('ignite-play-mode-plugin', 'build-cancel');
+  }
+
   onTakeScreenshot() {
     this.takeScreenshot();
   }
@@ -129,10 +135,9 @@ class PlayModeWindow extends React.Component {
   takeScreenshot(preview) {
     const { isRunning, isBuilding, isPaused } = this.props.storage();
     if (!!isRunning && !isBuilding && !isPaused && !!this._viewRef.current) {
-      this._viewRef.current.contentWindow.postMessage(
-        { id: 'screenshot', preview },
-        VIEW_URL,
-      );
+      this._viewRef.current.capturePage().then(image => {
+        ignite('?', !!preview ? 'screenshot-preview' : 'screenshot', image.toDataURL());
+      });
     }
   }
 
@@ -141,18 +146,6 @@ class PlayModeWindow extends React.Component {
       const { current } = this._viewRef;
       if (!!current && !!current.requestFullscreen) {
         current.requestFullscreen().then(() => current.focus());
-      }
-    }
-  }
-
-  onGotMessage(event) {
-    if (event.origin === VIEW_URL) {
-      const { id } = event.data;
-      if (id === 'screenshot') {
-        const { data, preview } = event.data;
-        if (!!data) {
-          ignite('?', !!preview ? 'screenshot-preview' : 'screenshot', data);
-        }
       }
     }
   }
@@ -166,11 +159,9 @@ class PlayModeWindow extends React.Component {
 
   componentDidMount() {
     this._onChangeToken = on('gui/ignite-play-mode-plugin/change', this._onChange);
-    window.addEventListener('message', this._onGotMessage);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('message', this._onGotMessage);
     clearInterval(this._periodicPreview);
     this._periodicPreview = null;
     ignite('ignite-play-mode-plugin', 'stop');
@@ -253,25 +244,36 @@ class PlayModeWindow extends React.Component {
               </IconButton>
             </span>
           </Tooltip>
-          <Tooltip title="Build game">
+          <Tooltip title="Build game (Debug)">
             <span>
               <IconButton
                 color="primary"
-                disabled={isRunning || isBuilding}
+                disabled={isBuilding}
                 onClick={this._onBuild}
               >
                 <BuildIcon />
               </IconButton>
             </span>
           </Tooltip>
-          <Tooltip title="Ship game">
+          <Tooltip title="Ship game (Release)">
             <span>
               <IconButton
                 color="primary"
-                disabled={isRunning || isBuilding}
+                disabled={isBuilding}
                 onClick={this._onBuildRelease}
               >
                 <BuildReleaseIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+          <Tooltip title="Cancel running build">
+            <span>
+              <IconButton
+                color="primary"
+                disabled={!isBuilding}
+                onClick={this._onBuildCancel}
+              >
+                <CancelIcon />
               </IconButton>
             </span>
           </Tooltip>

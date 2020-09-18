@@ -156,6 +156,15 @@ function getTypesFilters(typeNames) {
   return result;
 }
 
+function getFileOpeners(filePath) {
+  return !!filePath
+    ? Array.from(openers.entries())
+      .filter(([key]) => key === '?' || filePath.endsWith(key))
+      .filter(([key], _, arr) => key === '?' ? arr.length === 1 : true)
+      .map(([_, value]) => value[value.length - 1])
+    : []
+}
+
 on('gui/register-icon', (extension, type, widget) => {
   if (typeof extension === 'string') {
     if (typeof type === 'string') {
@@ -198,47 +207,173 @@ on('gui/register-file-opener', (extension, pluginName) => {
 });
 
 const FileActionDialog = props => {
-  const { filePath, onClose } = props;
-  const items = !!filePath
-    ? Array.from(openers.entries())
-      .filter(([key]) => key === '?' || filePath.endsWith(key))
-      .filter(([key], _, arr) => key === '?' ? arr.length === 1 : true)
-      .map(([_, value]) => {
-        const pluginName = value[value.length - 1];
-        return (
-          <Button
-            key={`open-with-${pluginName}`}
-            color="primary"
-            fullWidth={true}
-            onClick={() => {
-              ignite(pluginName, 'open-file', filePath);
-              !!onClose && onClose();
-            }}
-          >
-            {pluginName}
-          </Button>
-        );
-      })
-    : null
+  const {
+    filePath,
+    onClose,
+    isEdit,
+    onRename,
+    onCopy,
+    onPaste,
+    onDuplicate,
+    onDelete,
+  } = props;
+  const items = getFileOpeners(filePath).map(pluginName => {
+    return (
+      <Button
+        key={`open-with-${pluginName}`}
+        color="primary"
+        fullWidth={true}
+        onClick={() => {
+          ignite(pluginName, 'open-file', filePath);
+          !!onClose && onClose();
+        }}
+      >
+        {pluginName}
+      </Button>
+    );
+  });
   return (
     <Dialog scroll="paper" open={!!filePath} onClose={onClose}>
       <DialogTitle>{filePath}</DialogTitle>
       <DialogContent>
-        <Typography variant="button" color="secondary">Open with</Typography>
-        {items}
-        <Typography variant="button" color="secondary">Edit</Typography>
-        <Button color="primary" fullWidth={true}>Rename</Button>
-        <Button color="primary" fullWidth={true}>Copy</Button>
-        <Button color="primary" fullWidth={true}>Paste</Button>
-        <Button color="primary" fullWidth={true}>Duplicate</Button>
-        <Button color="primary" fullWidth={true}>Delete</Button>
+        <Typography
+          key="title"
+          variant="button"
+          color="secondary"
+        >
+          {!isEdit ? 'Open with' : 'Edit'}
+        </Typography>
+        {
+          !isEdit ? items : [
+            <Button
+              key="rename"
+              color="primary"
+              fullWidth={true}
+              disabled={!onRename}
+              onClick={() => {
+                onRename(filePath);
+                !!onClose && onClose();
+              }}
+            >
+              Rename
+            </Button>,
+            <Button
+              key="copy"
+              color="primary"
+              fullWidth={true}
+              disabled={!onCopy}
+              onClick={() => {
+                onCopy(filePath);
+                !!onClose && onClose();
+              }}
+            >
+              Copy
+            </Button>,
+            <Button
+              key="paste"
+              color="primary"
+              fullWidth={true}
+              disabled={!onPaste}
+              onClick={() => {
+                onPaste(filePath);
+                !!onClose && onClose();
+              }}
+            >
+              Paste
+            </Button>,
+            <Button
+              key="duplicate"
+              color="primary"
+              fullWidth={true}
+              disabled={!onDuplicate}
+              onClick={() => {
+                onDuplicate(filePath);
+                !!onClose && onClose();
+              }}
+            >
+              Duplicate
+            </Button>,
+            <Button
+              key="delete"
+              color="primary"
+              fullWidth={true}
+              disabled={!onDelete}
+              onClick={() => {
+                onDelete(filePath);
+                !!onClose && onClose();
+              }}
+            >
+              Delete
+            </Button>,
+          ]
+        }
       </DialogContent>
     </Dialog>
   );
+};
+
+class RenameDialog extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      oldPath: null,
+      newPath: null,
+    };
+  }
+
+  setupPath(filePath) {
+    this.setState({ oldPath: filePath, newPath: filePath });
+  }
+
+  render() {
+    const { onClose, onRename } = this.props;
+    const { oldPath, newPath } = this.state;
+    return (
+      <Dialog scroll="paper" open={!!oldPath && !!newPath} onClose={onClose}>
+        <DialogTitle>Rename: {oldPath}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="New Path"
+            variant="outlined"
+            fullWidth={true}
+            autoFocus={true}
+            value={newPath || ''}
+            onChange={() => this.setState({ newPath: event.target.value })}
+          />
+          <Button
+            color="primary"
+            disabled={!onRename}
+            onClick={() => {
+              onRename(oldPath, newPath);
+              !!onClose && onClose();
+            }}
+          >
+            Rename
+          </Button>
+          <Button
+            color="primary"
+            disabled={!onClose}
+            onClick={() => onClose()}
+          >
+            Cancel
+          </Button>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 }
 
 const EntryItem = props => {
-  const { fileName, filePath, isDirectory, onOpen } = props;
+  const {
+    fileName,
+    filePath,
+    isDirectory,
+    onOpen,
+    onEdit,
+    onSelect,
+    isSelected,
+  } = props;
   const icon = isDirectory ? FolderIcon : getIcon(fileName);
 
   return (
@@ -246,9 +381,11 @@ const EntryItem = props => {
       <Button
         color={isDirectory ? 'secondary' : 'primary'}
         size="large"
-        variant="text"
+        variant={!!isSelected ? 'outlined' : 'text'}
         startIcon={React.createElement(icon)}
-        onClick={!!onOpen ? () => onOpen(fileName) : null}
+        onClick={!!onSelect ? () => onSelect(fileName) : null}
+        onDoubleClick={!!onOpen ? () => onOpen(fileName) : null}
+        onContextMenu={!!onEdit ? () => onEdit(fileName) : null}
         style={style.entry}
       >
         <Typography noWrap={true} variant="h6">{fileName}</Typography>
@@ -270,11 +407,15 @@ class AssetBrowserWindow extends React.Component {
       excludeTypes: [],
       excludeFolders: false,
       openMenu: null,
+      openMenuIsEdit: false,
+      selected: [],
+      copyPaths: null,
     };
     this._onEntries = this.onEntries.bind(this);
     this._onTuneToggle = this.onTuneToggle.bind(this);
     this._onSearchChange = this.onSearchChange.bind(this);
     this._onSearchLocal = this.onSearchLocal.bind(this);
+    this._renameRef = React.createRef();
   }
 
   onEntries(entries) {
@@ -288,7 +429,7 @@ class AssetBrowserWindow extends React.Component {
         0
       }
     });
-    this.setState({ entries });
+    this.setState({ entries, selected: [] });
   }
 
   onTuneToggle() {
@@ -337,6 +478,16 @@ class AssetBrowserWindow extends React.Component {
     off(this._onEntriesToken);
   }
 
+  selectFilePath(filePath) {
+    const selected = new Set(this.state.selected);
+    if (selected.has(filePath)) {
+      selected.delete(filePath);
+    } else {
+      selected.add(filePath);
+    }
+    this.setState({ selected: Array.from(selected) });
+  }
+
   goto(currentPath) {
     this.setState({ currentPath });
     const { searchValue, searchLocal, excludeTypes, excludeFolders } = this.state;
@@ -344,7 +495,43 @@ class AssetBrowserWindow extends React.Component {
   }
 
   openFileMenu(filePath) {
-    this.setState({ openMenu: filePath });
+    const openers = getFileOpeners(filePath);
+    if (openers.length === 1) {
+      ignite(openers[0], 'open-file', filePath);
+    } else {
+      this.setState({ openMenu: filePath, openMenuIsEdit: false });
+    }
+  }
+
+  openDirMenu() {
+    this.setState({ openMenu: this.state.currentPath, openMenuIsEdit: true });
+  }
+
+  editFileMenu(filePath) {
+    this.setState({ openMenu: filePath, openMenuIsEdit: true });
+  }
+
+  renamePath(oldPath, newPath) {
+    ignite('ignite-asset-browser-plugin', 'rename', {
+      old_path: oldPath,
+      new_path: newPath,
+    });
+    this.goto(this.state.currentPath);
+  }
+
+  copyPasteFiles(filePaths) {
+    ignite('ignite-asset-browser-plugin', 'copy-paste', {
+      file_paths: Array.from(new Set(filePaths)),
+      destination: this.state.currentPath,
+    });
+    this.goto(this.state.currentPath);
+  }
+
+  deleteFiles(filePaths) {
+    ignite('ignite-asset-browser-plugin', 'delete', {
+      file_paths: Array.from(new Set(filePaths))
+    });
+    this.goto(this.state.currentPath);
   }
 
   updateContent(currentPath, searchValue, searchLocal, excludeTypes, excludeFolders) {
@@ -380,6 +567,9 @@ class AssetBrowserWindow extends React.Component {
       excludeTypes,
       excludeFolders,
       openMenu,
+      openMenuIsEdit,
+      selected,
+      copyPaths,
     } = this.state;
     const parts = currentPath.split(/[\\/]/g).slice(1);
     const paths = parts.map((_part, i) => '/' + parts.slice(0, i + 1).join('/'));
@@ -389,11 +579,14 @@ class AssetBrowserWindow extends React.Component {
         fileName={file_name}
         filePath={file_path}
         isDirectory={is_directory}
+        isSelected={selected.includes(`${currentPath}/${file_name}`)}
+        onSelect={() => this.selectFilePath(`${currentPath}/${file_name}`)}
         onOpen={
           is_directory
             ? () => this.goto(`${currentPath}/${file_name}`)
             : () => this.openFileMenu(`${currentPath}/${file_name}`)
         }
+        onEdit={() => this.editFileMenu(`${currentPath}/${file_name}`)}
       />
     )) : null;
     const pathItems = parts.map((part, i) => [
@@ -495,7 +688,21 @@ class AssetBrowserWindow extends React.Component {
         </Fade>
         <FileActionDialog
           filePath={openMenu}
+          isEdit={openMenuIsEdit}
           onClose={() => this.openFileMenu(null)}
+          onRename={filePath => !!this._renameRef.current && this._renameRef.current.setupPath(filePath)}
+          onCopy={filePath => this.setState({ copyPaths: [...selected, filePath] })}
+          onPaste={!!copyPaths ? () => this.copyPasteFiles(copyPaths) : null}
+          onDuplicate={filePath => this.copyPasteFiles([...selected, filePath])}
+          onDelete={filePath => this.deleteFiles([...selected, filePath])}
+        />
+        <RenameDialog
+          ref={this._renameRef}
+          onClose={() => !!this._renameRef.current && this._renameRef.current.setupPath(null)}
+          onRename={(oldPath, newPath) => {
+            this.renamePath(oldPath, newPath);
+            this.setState({ renamePath: null })
+          }}
         />
       </div >
     );

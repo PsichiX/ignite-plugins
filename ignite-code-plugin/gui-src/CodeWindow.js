@@ -14,7 +14,6 @@ import {
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
 import { ignite, on, off } from 'ignite-editor';
-import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-html';
 import 'ace-builds/src-noconflict/mode-jsx';
 import 'ace-builds/src-noconflict/mode-css';
@@ -25,6 +24,7 @@ import 'ace-builds/src-noconflict/mode-rust';
 import 'ace-builds/src-noconflict/mode-sh';
 import 'ace-builds/src-noconflict/mode-batchfile';
 import 'ace-builds/src-noconflict/theme-monokai';
+import AceEditor from 'react-ace';
 
 const langs = {
   'html': { tabSize: 2 },
@@ -130,6 +130,7 @@ class CodeEditor extends React.Component {
         tabSize={langMeta.tabSize}
         onChange={this._onChange}
         style={style.editor}
+        setOptions={{ useWorker: false }}
       />
     ) : null;
   }

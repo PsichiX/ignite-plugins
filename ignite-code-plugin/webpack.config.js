@@ -42,10 +42,12 @@ module.exports = {
         blocking: true,
       },
     }),
-    new CopyPlugin([
-      'manifest.json',
-      'pkg/index.js',
-      'pkg/index_bg.wasm',
-    ]),
+    new CopyPlugin({
+      patterns: [
+        'manifest.json',
+        'pkg/index.js',
+        'pkg/index_bg.wasm',
+      ],
+    }),
   ],
 };

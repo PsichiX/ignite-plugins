@@ -16,7 +16,7 @@ pub mod editor {
             name: &str,
             args: Box<[JsValue]>,
             blocking: bool,
-            quiet: bool,
+            log_level: u8,
         ) -> Result<String, JsValue>;
 
         #[wasm_bindgen(js_namespace = editor, catch)]
@@ -59,14 +59,14 @@ pub mod editor {
         name: &str,
         args: Vec<String>,
         blocking: bool,
-        quiet: bool,
+        log_level: u8,
     ) -> Result<String, JsValue> {
         let args = args
             .into_iter()
             .map(|arg| arg.into())
             .collect::<Vec<JsValue>>()
             .into_boxed_slice();
-        run_node_inner(name, args, blocking, quiet)
+        run_node_inner(name, args, blocking, log_level)
     }
 }
 
@@ -124,8 +124,27 @@ pub mod file_system {
         pub fn request_import(
             title: &str,
             extension: &str,
-            destinationDir: &str,
+            destination_dir: &str,
         ) -> Result<(), JsValue>;
+
+        #[wasm_bindgen(js_namespace = file_system, catch)]
+        pub fn copy_path(
+            source_path: &str,
+            destination_path: &str,
+            project_only: bool,
+            overrideName: bool,
+        ) -> Result<(), JsValue>;
+
+        #[wasm_bindgen(js_namespace = file_system, catch)]
+        pub fn move_path(
+            source_path: &str,
+            destination_path: &str,
+            project_only: bool,
+            overrideName: bool,
+        ) -> Result<(), JsValue>;
+
+        #[wasm_bindgen(js_namespace = file_system, catch)]
+        pub fn delete_path(path: &str, project_only: bool) -> Result<(), JsValue>;
     }
 
     /// (path, name, is directory)

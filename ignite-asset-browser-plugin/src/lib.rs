@@ -1,5 +1,9 @@
 use glob::Pattern;
-use ignite_plugin_utils::{editor::emit, file_system::scan_dir, paths::project_path};
+use ignite_plugin_utils::{
+    editor::emit,
+    file_system::{copy_path, delete_path, move_path, scan_dir},
+    paths::{basename, project_path},
+};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -24,6 +28,23 @@ struct Finder {
     pub exclude_folders: bool,
     pub local: bool,
     pub path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct CopyPaste {
+    pub file_paths: Vec<String>,
+    pub destination: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Delete {
+    pub file_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Rename {
+    pub old_path: String,
+    pub new_path: String,
 }
 
 #[wasm_bindgen]
@@ -88,6 +109,34 @@ pub fn query(query: &str, data: JsValue) -> Result<(), JsValue> {
                     .collect::<Vec<_>>();
                 if let Ok(entries) = JsValue::from_serde(&entries) {
                     emit("entries", entries)?;
+                }
+            }
+        }
+        "rename" => {
+            let root = project_path()?;
+            if let Ok(rename) = data.into_serde::<Rename>() {
+                let from = format!("{}/{}", root, rename.old_path);
+                let to = format!("{}/{}", root, rename.new_path);
+                move_path(&from, &to, true, false)?;
+            }
+        }
+        "copy-paste" => {
+            let root = project_path()?;
+            if let Ok(copy_paste) = data.into_serde::<CopyPaste>() {
+                for path in &copy_paste.file_paths {
+                    let file_name = basename(path)?;
+                    let source_path = format!("{}/{}", root, path);
+                    let destination_path =
+                        format!("{}/{}/{}", root, copy_paste.destination, file_name);
+                    copy_path(&source_path, &destination_path, true, false)?;
+                }
+            }
+        }
+        "delete" => {
+            let root = project_path()?;
+            if let Ok(delete) = data.into_serde::<Delete>() {
+                for path in &delete.file_paths {
+                    delete_path(&format!("{}/{}", root, path), true)?;
                 }
             }
         }
