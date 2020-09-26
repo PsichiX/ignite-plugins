@@ -1,0 +1,14 @@
+inject
+```
+%{ $JS }%
+wasm.exports = require('./index.asm.js');
+```
+
+replace '^import .*'
+```let wasm = { exports: null };```
+
+replace 'wasm\\.'
+```wasm.exports.```
+
+replace 'wasm\\.exports\\.exports'
+```wasm.exports```

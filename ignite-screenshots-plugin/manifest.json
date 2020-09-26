@@ -4,7 +4,8 @@
   "plugin": "index.js",
   "gui": "gui",
   "queries": [
-    "screenshot"
+    "screenshot",
+    "screenshot-preview"
   ],
   "windows": [],
   "widgets": []

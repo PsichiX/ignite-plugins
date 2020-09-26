@@ -36,15 +36,13 @@ module.exports = {
     new ShellPlugin({
       onBuildStart: {
         scripts: [
-          'wasm-pack build --release --no-typescript --out-name index gui-src'
-        ],
-        blocking: true,
-      },
-    }),
-    new ShellPlugin({
-      onBuildStart: {
-        scripts: [
-          'wasm-pack build --release --no-typescript --out-name index --target nodejs'
+          'wasm-pack build --release --no-typescript --out-name index gui-src',
+          'D:\\Applications\\binaryen\\bin\\wasm2js gui-src/pkg/index_bg.wasm -o gui-src/pkg/index.asm.js --enable-mutable-globals',
+          'chrobry.exe -e gui-src/index.asm.js.chrobry -f ASMJS=gui-src/pkg/index.asm.js -o gui-src/pkg/index.asm.js',
+          'chrobry.exe -e gui-src/index_bg.js.chrobry -f JS=gui-src/pkg/index_bg.js -o gui-src/pkg/index_bg.js',
+          "rm -f gui-src/pkg/index_bg.wasm",
+          "rm -f gui-src/pkg/index.js",
+          'wasm-pack build --release --no-typescript --out-name index --target nodejs',
         ],
         blocking: true,
       },

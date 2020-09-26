@@ -5,10 +5,7 @@
   "gui": "gui",
   "privileges": {},
   "templates": {},
-  "queries": [
-    "alert",
-    "ping"
-  ],
+  "queries": [],
   "windows": [],
   "widgets": [
     "HelloWorld"

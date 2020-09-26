@@ -9,7 +9,7 @@ pub mod editor {
         pub fn ignite(plugin: &str, query: &str, data: JsValue) -> Result<(), JsValue>;
 
         #[wasm_bindgen(js_namespace = editor)]
-        pub fn ignite_delayed(plugin: &str, query: &str, data: JsValue);
+        pub fn ignite_delayed(plugin: &str, query: &str, data: JsValue, milliseconds: usize);
 
         #[wasm_bindgen(js_namespace = editor, js_name = run_node, catch)]
         fn run_node_inner(
@@ -107,8 +107,7 @@ pub mod file_system {
         pub fn write_string(path: &str, contents: &str, project_only: bool) -> Result<(), JsValue>;
 
         #[wasm_bindgen(js_namespace = file_system, js_name = write, catch)]
-        pub fn write_buffer(path: &str, contents: &[u8], project_only: bool)
-            -> Result<(), JsValue>;
+        pub fn write_buffer(path: &str, contents: &[u8], project_only: bool) -> Result<(), JsValue>;
 
         #[wasm_bindgen(js_namespace = file_system, js_name = scan_dir, catch)]
         fn scan_dir_inner(
@@ -120,10 +119,10 @@ pub mod file_system {
         #[wasm_bindgen(js_namespace = file_system, catch)]
         pub fn request_save(buffer: &[u8], title: &str, extension: &str) -> Result<(), JsValue>;
 
-        #[wasm_bindgen(js_namespace = file_system, catch)]
-        pub fn request_import(
+        #[wasm_bindgen(js_namespace = file_system, js_name = request_import, catch)]
+        pub fn request_import_inner(
             title: &str,
-            extension: &str,
+            extensions: Box<[JsValue]>,
             destination_dir: &str,
         ) -> Result<(), JsValue>;
 
@@ -147,7 +146,7 @@ pub mod file_system {
         pub fn delete_path(path: &str, project_only: bool) -> Result<(), JsValue>;
     }
 
-    /// (path, name, is directory)
+    /// (name, path, is directory)
     pub fn scan_dir(
         path: &str,
         recursively: bool,
@@ -159,6 +158,19 @@ pub mod file_system {
             Ok(result) => Ok(result),
             Err(error) => Err(format!("{:?}", error).into()),
         }
+    }
+
+    pub fn request_import(
+        title: &str,
+        extensions: Vec<String>,
+        destination_dir: &str,
+    ) -> Result<(), JsValue> {
+        let extensions = extensions
+            .into_iter()
+            .map(|ext| ext.into())
+            .collect::<Vec<JsValue>>()
+            .into_boxed_slice();
+        request_import_inner(title, extensions, destination_dir)
     }
 }
 

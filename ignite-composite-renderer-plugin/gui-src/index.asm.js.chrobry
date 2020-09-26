@@ -1,0 +1,16 @@
+inject
+```
+%{ $ASMJS }%
+export var __wbindgen_export_2 = retasmFunc.__wbindgen_export_2;
+```
+
+replace '"__wbindgen_start": \\$([0-9]+)'
+```"__wbindgen_start": $%{ $_1 }%,
+  "__wbindgen_export_2": {
+    get value() {
+      return global$0;
+    },
+    set value(v) {
+      global$0 = v;
+    },
+  },```

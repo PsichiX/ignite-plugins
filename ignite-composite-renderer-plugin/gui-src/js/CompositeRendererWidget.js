@@ -1,5 +1,8 @@
 import React from 'react';
 import { registerWidget } from 'ignite-gui';
+import * as mod from '../pkg/index_bg';
+
+mod.main_js();
 
 const style = {
   container: {
@@ -37,11 +40,9 @@ class CompositeRendererWidget extends React.Component {
     const { props, _canvasRef } = this;
     const { defaultRenderState } = props;
 
-    window.compositeRenderer().then(mod => {
-      this._writeStorage(storage => {
-        storage.id = mod.renderer_create(_canvasRef.current, defaultRenderState);
-        storage.cameraId = mod.camera_create(storage.id || '');
-      });
+    this._writeStorage(storage => {
+      storage.id = mod.renderer_create(_canvasRef.current, defaultRenderState);
+      storage.cameraId = mod.camera_create(storage.id || '');
     });
 
     this._handle = window.requestAnimationFrame(this._onFrame);
@@ -51,69 +52,53 @@ class CompositeRendererWidget extends React.Component {
     window.cancelAnimationFrame(this._handle);
     this._handle = null;
 
-    window.compositeRenderer().then(mod => {
-      this._readStorage(storage => {
-        mod.renderer_destroy(storage.id || '');
-      });
+    this._readStorage(storage => {
+      mod.renderer_destroy(storage.id || '');
     });
   }
 
   onFrame() {
-    window.compositeRenderer().then(mod => {
-      this._readStorage(storage => {
-        mod.renderer_refresh(storage.id || '', false);
-      });
+    this._readStorage(storage => {
+      mod.renderer_refresh(storage.id || '', false);
     });
 
     this._handle = window.requestAnimationFrame(this._onFrame);
   }
 
   renderCommands(data) {
-    window.compositeRenderer().then(mod => {
-      this._readStorage(storage => {
-        data = Array.isArray(data) ? { default: data } : data;
-        mod.render_commands(storage.id || '', data);
-      });
+    this._readStorage(storage => {
+      data = Array.isArray(data) ? { default: data } : data;
+      mod.render_commands(storage.id || '', data);
     });
   }
 
   setCamera(data) {
-    window.compositeRenderer().then(mod => {
-      this._readStorage(storage => {
-        mod.camera_set(storage.id, storage.cameraId, data);
-      });
+    this._readStorage(storage => {
+      mod.camera_set(storage.id, storage.cameraId, data);
     });
   }
 
   getCamera(id) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        return mod.camera_state(storage.id, id);
-      });
+    return this._readStorage(storage => {
+      return mod.camera_state(storage.id, id);
     });
   }
 
   cameraScreenToWorldSpace(id, x, y) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        return mod.camera_screen_to_world_space(storage.id, id, x, y);
-      });
+    return this._readStorage(storage => {
+      return mod.camera_screen_to_world_space(storage.id, id, x, y);
     });
   }
 
   cameraWorldToScreenSpace(id, x, y) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        return mod.camera_world_to_screen_space(storage.id, id, x, y);
-      });
+    return this._readStorage(storage => {
+      return mod.camera_world_to_screen_space(storage.id, id, x, y);
     });
   }
 
   addImageResource(id, resource) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        return mod.add_image_resource(storage.id, id, resource);
-      });
+    return this._readStorage(storage => {
+      return mod.add_image_resource(storage.id, id, resource);
     });
   }
 
@@ -124,18 +109,14 @@ class CompositeRendererWidget extends React.Component {
   }
 
   removeImageResource(id) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        return mod.remove_image_resource(storage.id, id);
-      });
+    return this._readStorage(storage => {
+      return mod.remove_image_resource(storage.id, id);
     });
   }
 
   addFontFaceResource(id, resource) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        return mod.add_fontface_resource(storage.id, id, resource);
-      });
+    return this._readStorage(storage => {
+      return mod.add_fontface_resource(storage.id, id, resource);
     });
   }
 
@@ -148,11 +129,9 @@ class CompositeRendererWidget extends React.Component {
   }
 
   removeFontFaceResource(id) {
-    return window.compositeRenderer().then(mod => {
-      return this._readStorage(storage => {
-        window.fonts.add(font);
-        return mod.remove_fontface_resource(storage.id, id);
-      });
+    return this._readStorage(storage => {
+      window.fonts.add(font);
+      return mod.remove_fontface_resource(storage.id, id);
     });
   }
 
