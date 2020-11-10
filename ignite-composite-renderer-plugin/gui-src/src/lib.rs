@@ -1,48 +1,22 @@
 #[macro_use]
 extern crate lazy_static;
-extern crate oxygengine_composite_renderer as renderer;
+extern crate ignite_composite_renderer_plugin_utils as utils;
 extern crate oxygengine_composite_renderer_backend_web as renderer_web;
 
-use renderer::{
-    component::{CompositeCamera, CompositeTransform},
-    composite_renderer::{
-        Command, CompositeRenderer, CompositeRendererResources, RenderState, Renderable,
-    },
-    math::{Mat2d, Vec2},
-};
 use renderer_web::WebCompositeRenderer;
-use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, str::FromStr, sync::RwLock};
 use typid::ID;
+use utils::{
+    oxygengine::composite_renderer::{
+        Command, CompositeRenderer, CompositeRendererResources, Renderable,
+    },
+    Camera, RenderCommands, RenderStateProxy,
+};
 use wasm_bindgen::prelude::*;
 use web_sys::{FontFace, HtmlCanvasElement, HtmlImageElement};
 
 lazy_static! {
     static ref RENDERERS: RwLock<HashMap<String, Renderer>> = RwLock::new(Default::default());
-}
-
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-struct Camera {
-    #[serde(default)]
-    pub order: f32,
-    #[serde(default)]
-    pub camera: CompositeCamera,
-    #[serde(default)]
-    pub transform: CompositeTransform,
-    #[serde(skip)]
-    pub world_transform: Mat2d,
-    #[serde(skip)]
-    pub world_inverse_transform: Mat2d,
-}
-
-impl Camera {
-    pub fn screen_to_world_space(&self, point: Vec2) -> Vec2 {
-        self.world_inverse_transform * point
-    }
-
-    pub fn world_to_screen_space(&self, point: Vec2) -> Vec2 {
-        self.world_transform * point
-    }
 }
 
 struct Renderer {
@@ -110,9 +84,6 @@ impl Renderer {
     }
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-struct RenderCommands(HashMap<String, Vec<Command<'static>>>);
-
 #[wasm_bindgen(start)]
 pub fn main_js() -> Result<(), JsValue> {
     #[cfg(feature = "console_error_panic_hook")]
@@ -128,8 +99,8 @@ pub fn renderer_create(
     let render_state = if render_state.is_null() || render_state.is_undefined() {
         Default::default()
     } else {
-        match render_state.into_serde::<RenderState>() {
-            Ok(render_state) => render_state,
+        match render_state.into_serde::<RenderStateProxy>() {
+            Ok(render_state) => render_state.into(),
             Err(error) => return Err(format!("{:#?}", error).into()),
         }
     };

@@ -27,7 +27,7 @@ import {
   GitHub as GitIcon,
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
-import { ignite, on, off } from 'ignite-editor';
+import { ignite, ignite_delayed, on, off } from 'ignite-editor';
 
 const style = {
   container: {
@@ -224,7 +224,7 @@ const FileActionDialog = props => {
         color="primary"
         fullWidth={true}
         onClick={() => {
-          ignite(pluginName, 'open-file', filePath);
+          setTimeout(() => ignite(pluginName, 'open-file', filePath), 1);
           !!onClose && onClose();
         }}
       >
@@ -497,7 +497,8 @@ class AssetBrowserWindow extends React.Component {
   openFileMenu(filePath) {
     const openers = getFileOpeners(filePath);
     if (openers.length === 1) {
-      ignite(openers[0], 'open-file', filePath);
+      const opener = openers[0];
+      setTimeout(() => ignite(opener, 'open-file', filePath), 1);
     } else {
       this.setState({ openMenu: filePath, openMenuIsEdit: false });
     }

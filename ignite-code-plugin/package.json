@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "ace-builds": "^1.4.12",
+    "file-loader": "^6.2.0",
     "react-ace": "^9.1.3"
   }
 }

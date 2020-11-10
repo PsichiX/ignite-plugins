@@ -14,6 +14,9 @@ import {
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
 import { ignite, on, off } from 'ignite-editor';
+import ace from "ace-builds/src-noconflict/ace";
+ace.config.set('useWorker', false);
+ace.config.set('loadWorkerFromBlob', false);
 import 'ace-builds/src-noconflict/mode-html';
 import 'ace-builds/src-noconflict/mode-jsx';
 import 'ace-builds/src-noconflict/mode-css';
@@ -130,7 +133,10 @@ class CodeEditor extends React.Component {
         tabSize={langMeta.tabSize}
         onChange={this._onChange}
         style={style.editor}
-        setOptions={{ useWorker: false }}
+        setOptions={{
+          useWorker: false,
+          showLineNumbers: true,
+        }}
       />
     ) : null;
   }

@@ -22,6 +22,6 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 web-sys = "0.3"
 console_error_panic_hook = { version = "0.1", optional = true }
 lazy_static = "1.4"
-oxygengine-composite-renderer = { version = "0.14", features = ["web"] }
+ignite-composite-renderer-plugin-utils = { version = "0.1", path = "../../ignite-composite-renderer-plugin-utils" }
 oxygengine-composite-renderer-backend-web = { version = "0.14", features = ["web"] }
 typid = "1"

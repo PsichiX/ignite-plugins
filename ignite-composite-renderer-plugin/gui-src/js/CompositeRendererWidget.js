@@ -130,7 +130,7 @@ class CompositeRendererWidget extends React.Component {
 
   removeFontFaceResource(id) {
     return this._readStorage(storage => {
-      window.fonts.add(font);
+      window.fonts.delete(font);
       return mod.remove_fontface_resource(storage.id, id);
     });
   }
@@ -155,7 +155,10 @@ class CompositeRendererWidget extends React.Component {
 
   render() {
     return (
-      <canvas ref={this._canvasRef} style={style.container} />
+      <canvas
+        ref={this._canvasRef}
+        style={{ ...style.container, ...this.props.style }}
+      />
     );
   }
 }

@@ -37,6 +37,7 @@ const gui = {
     'react': 'React',
     'react-dom': 'ReactDOM',
     '@material-ui/core': 'MaterialUI',
+    '@material-ui/lab': 'MaterialLabUI',
     '@material-ui/icons': 'MaterialIcons',
     '@material-ui/core/styles': 'MaterialStyles',
     'ignite-gui': 'gui',

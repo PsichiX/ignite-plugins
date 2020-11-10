@@ -107,7 +107,8 @@ pub mod file_system {
         pub fn write_string(path: &str, contents: &str, project_only: bool) -> Result<(), JsValue>;
 
         #[wasm_bindgen(js_namespace = file_system, js_name = write, catch)]
-        pub fn write_buffer(path: &str, contents: &[u8], project_only: bool) -> Result<(), JsValue>;
+        pub fn write_buffer(path: &str, contents: &[u8], project_only: bool)
+            -> Result<(), JsValue>;
 
         #[wasm_bindgen(js_namespace = file_system, js_name = scan_dir, catch)]
         fn scan_dir_inner(

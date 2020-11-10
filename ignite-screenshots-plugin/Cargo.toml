@@ -15,5 +15,5 @@ opt-level = "s"
 serde = { version = "1", features = ["derive"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 ignite-plugin-utils = { version = "0.1", path = "../ignite-plugin-utils" }
-base64 = "0.12"
+base64 = "0.13"
 image = { default-features = false, features = ["png"], version = "0.23" }
