@@ -13,7 +13,7 @@ import {
   Close as CloseIcon,
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
-import { ignite, on, off } from 'ignite-editor';
+import { ignite, on, off, emit } from 'ignite-editor';
 import ace from "ace-builds/src-noconflict/ace";
 ace.config.set('useWorker', false);
 ace.config.set('loadWorkerFromBlob', false);
@@ -79,7 +79,7 @@ const extensionsList = [
   '?',
 ];
 for (const extension of extensionsList) {
-  window.editor.emit('gui/register-file-opener', extension, 'ignite-code-plugin');
+  emit('gui/register-file-opener', extension, 'ignite-code-plugin');
 }
 
 const style = {

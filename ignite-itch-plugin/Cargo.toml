@@ -12,7 +12,3 @@ crate-type = ["cdylib"]
 opt-level = "s"
 
 [dependencies]
-serde = { version = "1", features = ["derive"] }
-wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
-ignite-plugin-utils = { version = "0.1", path = "../ignite-plugin-utils" }
-lazy_static = "1.4"

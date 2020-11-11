@@ -12,7 +12,7 @@ import {
   Close as CloseIcon,
 } from '@material-ui/icons';
 import { registerWindow } from 'ignite-gui';
-import { ignite, on, off } from 'ignite-editor';
+import { ignite, on, off, emit } from 'ignite-editor';
 
 const extensionsList = [
   ['.png', 'image'],
@@ -28,7 +28,7 @@ const extensionsList = [
   ['.webm', 'video'],
 ];
 for (const extension of extensionsList) {
-  window.editor.emit('gui/register-file-opener', extension[0], 'ignite-media-plugin');
+  emit('gui/register-file-opener', extension[0], 'ignite-media-plugin');
 }
 
 function getFileType(filePath) {
